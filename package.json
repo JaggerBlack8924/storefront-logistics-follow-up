@@ -1,0 +1,13 @@
+{
+  "name": "storefront-logistics-follow-up",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "follow-up": "node src/logistics_follow_up.ts",
+    "test": "node --test test/logistics_follow_up.test.ts"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
