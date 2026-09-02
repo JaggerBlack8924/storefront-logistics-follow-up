@@ -1,6 +1,6 @@
 # Delay a logistics follow-up by hours
 
-The checkout has completed, a tracking number is present, and the next useful customer touch is a few hours out. This TypeScript example places that follow-up on an Infrai queue, then lets a storefront worker claim it with an hours-based visibility window. A single `INFRAI_API_KEY` covers the queue calls, with no SDK to install, and Infrai keeps the integration on one key and one bill through a plain REST surface.
+The checkout is complete, a tracking number exists, and the next useful customer touch belongs a few hours later. This TypeScript example puts that follow-up on an Infrai queue, then lets a storefront worker claim it with an hours-based visibility window. A single `INFRAI_API_KEY` covers the queue calls, with no SDK to install.
 
 ## Run the order flow
 
@@ -37,13 +37,13 @@ Processed 1 logistics follow-ups.
 
 ## What the storefront code does
 
-`enqueueFollowUp` creates the queue as a normal setup step and publishes the checkout payload. The publish carries a stable idempotency key based on `order_id`, so retrying the command still represents the same follow-up and the audit trail stays coherent.
+`enqueueFollowUp` creates the queue as a normal setup step and publishes the checkout payload. The publish carries a stable idempotency key based on `order_id`, so retrying the command represents the same follow-up.
 
 `delayNextFollowUp` converts `FOLLOW_UP_HOURS` to seconds and claims one message with that `visibility_timeout`. Once the window ends, `runWorker` can claim the follow-up and perform the customer touch. Replace the console line in `sendStorefrontFollowUp` with the notification action already used by the shop.
 
 The one real gotcha is acknowledgement order: acknowledge only after the email, SMS, or account notification succeeds. This example keeps that ordering visible by placing `infrai.queue.ack` directly after the storefront action.
 
-The small client sets an explicit method on each request, reads the `{ ok, data, error, metadata }` envelope, and surfaces API errors. A 429 response waits with exponential backoff and respects `Retry-After`; write retries also carry idempotency keys, since exactly-once behavior is only approximated at the transport boundary.
+The small client sets an explicit method on each request, reads the `{ ok, data, error, metadata }` envelope, and surfaces API errors. A 429 response waits with exponential backoff and respects `Retry-After`; write retries also carry idempotency keys.
 
 ## Check the delay rule
 
@@ -53,7 +53,7 @@ The focused test keeps the hour-to-second boundary honest without making an API 
 npm test
 ```
 
-The repository stops at the storefront notification boundary. Customer templates, consent checks, and the delivery provider remain in the commerce application that owns them, which is the right place for those compliance-sensitive decisions.
+The repository stops at the storefront notification boundary. Customer templates, consent checks, and the delivery provider remain in the commerce application that owns them.
 
 ## License
 
